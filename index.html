@@ -1,0 +1,1189 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>수학 문제지 생성기</title>
+  <!-- html2pdf 라이브러리 (PDF 다운로드용) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.2/html2pdf.bundle.min.js"></script>
+  <link
+    href="https://cdnjs.cloudflare.com/ajax/libs/material-design-icons/3.0.1/iconfont/material-icons.min.css"
+    rel="stylesheet"
+  />
+  <style>
+    /* ================= 공통 변수(다크 모드1 기본) ================= */
+    :root {
+      --bg-primary: #1a1a1a;
+      --bg-secondary: #252525;
+      --bg-tertiary: #333333;
+      --text-primary: #e0e0e0;
+      --text-secondary: #b0b0b0;
+      --accent: #6d5acd;
+      --accent-hover: #8574e3;
+      --danger: #e74c3c;
+      --success: #2ecc71;
+      --warning: #f39c12;
+      --border: #444444;
+    }
+
+    /* ================= 기본 리셋 & 폰트 ================= */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Noto Sans KR', sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-primary);
+      color: var(--text-primary);
+      height: 100vh;
+      width: 100vw;
+      display: grid;
+      /* 
+         3열 레이아웃: 
+         - 왼쪽(problem-sidebar) 고정폭 
+         - 중앙(main-content) 가변 
+         - 오른쪽(settings-sidebar) 고정폭 
+      */
+      grid-template-columns: 300px 1fr 300px;
+      grid-template-rows: 60px 1fr;
+      grid-template-areas:
+        "header header header"
+        "problem main settings";
+      overflow: hidden;
+    }
+
+    /* ================= 헤더 ================= */
+    header {
+      grid-area: header;
+      background-color: var(--bg-secondary);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 1.5rem;
+      border-bottom: 1px solid var(--border);
+      height: 60px;
+    }
+    .logo {
+      color: var(--accent);
+      font-size: 1.5rem;
+      font-weight: bold;
+    }
+
+    /* ================= 테마 드롭다운 ================= */
+    .theme-dropdown {
+      position: relative;
+      display: inline-block;
+    }
+    .dropdown-toggle {
+      background-color: var(--bg-tertiary);
+      color: var(--text-primary);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 0.5rem 1rem;
+      cursor: pointer;
+      font-size: 0.9rem;
+    }
+    .dropdown-menu {
+      display: none;
+      position: absolute;
+      right: 0;
+      background-color: var(--bg-secondary);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      margin-top: 0.5rem;
+      min-width: 150px;
+      z-index: 100;
+    }
+    .dropdown-item {
+      padding: 0.5rem 1rem;
+      cursor: pointer;
+      font-size: 0.9rem;
+    }
+    .dropdown-item:hover {
+      background-color: var(--bg-tertiary);
+    }
+
+    /* ================= 왼쪽: 문제 추가 영역 ================= */
+    .problem-sidebar {
+      grid-area: problem;
+      background-color: var(--bg-secondary);
+      border-right: 1px solid var(--border);
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      padding: 1rem;
+    }
+    .problem-manager {
+      flex: 1; /* 세로 공간을 꽉 채우기 위함 */
+      display: flex;
+      flex-direction: column;
+    }
+    .problem-input-section h3 {
+      margin-bottom: 0.75rem;
+      color: var(--accent);
+      font-size: 1rem;
+    }
+    .problem-form {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+    }
+    .problem-form input {
+      flex: 1;
+      padding: 0.5rem;
+      background-color: var(--bg-tertiary);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      color: var(--text-primary);
+      font-size: 0.9rem;
+    }
+    .problem-form button {
+      background-color: var(--accent);
+      color: white;
+      border: none;
+      border-radius: 4px;
+      padding: 0.5rem 1rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
+      font-size: 0.9rem;
+      white-space: nowrap;
+    }
+    .problem-form button:hover {
+      background-color: var(--accent-hover);
+    }
+
+    /* 문제 리스트 */
+    .problem-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      overflow-y: auto;
+      padding-right: 0.25rem;
+    }
+    .problem-item {
+      background-color: var(--bg-tertiary);
+      border-radius: 4px;
+      padding: 0.75rem;
+      /* 아이콘이 텍스트를 가리지 않도록 오른쪽 여백 */
+      padding-right: 50px;
+      cursor: grab;
+      position: relative;
+      border: 1px solid var(--border);
+    }
+    .problem-text {
+      margin-bottom: 0.5rem;
+      padding-right: 0.5rem;
+      word-break: break-word;
+      font-size: 0.9rem;
+    }
+    .problem-info {
+      display: flex;
+      justify-content: space-between;
+      color: var(--text-secondary);
+      font-size: 0.8rem;
+    }
+    .problem-actions {
+      position: absolute;
+      top: 50%;
+      right: 5px;
+      transform: translateY(-50%);
+      display: flex;
+      gap: 0.25rem;
+    }
+    .problem-actions button {
+      background-color: var(--bg-secondary);
+      border: 1px solid var(--border);
+      color: var(--text-primary);
+      border-radius: 4px;
+      width: 28px;
+      height: 28px;
+      padding: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+    .problem-actions button:hover {
+      background-color: var(--bg-primary);
+    }
+    .problem-actions button.delete {
+      color: var(--danger);
+    }
+    .problem-actions button.edit {
+      color: var(--warning);
+    }
+    .problem-actions button.properties {
+      color: var(--success);
+    }
+
+    /* ================= 중앙: 미리보기 영역 ================= */
+    .main-content {
+      grid-area: main;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    .preview-section {
+      position: relative;
+      flex: 1;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+    .preview-tabs {
+      display: flex;
+      background-color: var(--bg-secondary);
+      border-bottom: 1px solid var(--border);
+    }
+    .preview-tab {
+      padding: 0.75rem 1.5rem;
+      cursor: pointer;
+      border-right: 1px solid var(--border);
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+    }
+    .preview-tab.active {
+      background-color: var(--bg-tertiary);
+      color: var(--text-primary);
+      font-weight: bold;
+    }
+    .preview-tab:hover:not(.active) {
+      background-color: var(--bg-primary);
+    }
+    .preview-content {
+      flex: 1;
+      overflow: auto;
+      padding: 1.5rem;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      background-color: var(--bg-tertiary);
+    }
+    .preview-container {
+      display: none;
+    }
+    .preview-container.active {
+      display: block;
+    }
+    .a4-page {
+      width: 210mm;
+      height: 297mm;
+      background-color: white;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+      margin: 0 auto;
+      padding: 20mm;
+      color: #000;
+      position: relative;
+      overflow: hidden;
+      transform-origin: top center;
+    }
+    .a4-page h2 {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+    .problem {
+      margin-bottom: 1.5rem;
+    }
+    .answer-sheet {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin-top: 2rem;
+      border-top: 1px solid #ccc;
+      padding-top: 1rem;
+    }
+    .answer-item {
+      display: flex;
+      align-items: center;
+      width: 80px;
+    }
+    .answer-item span {
+      width: 20px;
+      text-align: right;
+      margin-right: 0.5rem;
+    }
+    .answer-item div {
+      width: 40px;
+      height: 30px;
+      border: 1px solid #000;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .preview-toolbar {
+      position: absolute;
+      bottom: 1rem;
+      right: 1rem;
+      display: flex;
+      gap: 0.5rem;
+      z-index: 10;
+    }
+    .preview-toolbar button {
+      background-color: var(--bg-secondary);
+      color: var(--text-primary);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 0.5rem;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+    .preview-toolbar button:hover {
+      background-color: var(--bg-primary);
+    }
+    /* 줌 컨트롤 */
+    .zoom-controls {
+      position: absolute;
+      bottom: 1rem;
+      left: 1rem;
+      background-color: var(--bg-secondary);
+      border-radius: 4px;
+      display: flex;
+      overflow: hidden;
+      border: 1px solid var(--border);
+    }
+    .zoom-controls button {
+      background: none;
+      border: none;
+      padding: 0.5rem;
+      cursor: pointer;
+      color: var(--text-primary);
+      transition: background-color 0.2s;
+    }
+    .zoom-controls button:hover {
+      background-color: var(--bg-primary);
+    }
+    .zoom-controls span {
+      display: flex;
+      align-items: center;
+      padding: 0 0.5rem;
+      font-size: 0.9rem;
+    }
+
+    /* ================= 오른쪽: 설정 영역 ================= */
+    .settings-sidebar {
+      grid-area: settings;
+      background-color: var(--bg-secondary);
+      border-left: 1px solid var(--border);
+      overflow-y: auto;
+      padding: 1rem;
+      display: flex;
+      flex-direction: column;
+    }
+    .menu-section {
+      margin-bottom: 1.25rem;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+    }
+    .menu-section h3 {
+      margin: 0;
+      padding: 0.75rem 1rem;
+      background-color: var(--bg-tertiary);
+      color: var(--accent);
+      font-size: 1rem;
+      cursor: pointer;
+    }
+    .menu-section .content {
+      padding: 1rem;
+      display: block;
+    }
+    .form-group {
+      margin-bottom: 1rem;
+    }
+    .form-group label {
+      display: block;
+      margin-bottom: 0.5rem;
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+    }
+    input[type="text"],
+    input[type="number"],
+    input[type="color"],
+    select {
+      width: 100%;
+      padding: 0.5rem;
+      background-color: var(--bg-tertiary);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      color: var(--text-primary);
+      font-size: 0.9rem;
+    }
+    .checkbox-container {
+      display: flex;
+      align-items: center;
+    }
+    .checkbox-container input[type="checkbox"] {
+      appearance: none;
+      width: 16px;
+      height: 16px;
+      border: 1px solid var(--border);
+      border-radius: 3px;
+      background-color: var(--bg-tertiary);
+      margin-right: 0.5rem;
+      position: relative;
+      cursor: pointer;
+    }
+    .checkbox-container input[type="checkbox"]:checked {
+      background-color: var(--accent);
+    }
+    .checkbox-container input[type="checkbox"]:checked::after {
+      content: '✓';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      color: white;
+      font-size: 0.8rem;
+    }
+    .btn {
+      padding: 0.5rem 1rem;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: background-color 0.2s, transform 0.1s;
+      width: 100%;
+      margin-bottom: 0.75rem;
+      font-size: 0.9rem;
+    }
+    .btn:active {
+      transform: scale(0.98);
+    }
+    .btn-primary {
+      background-color: var(--accent);
+      color: white;
+    }
+    .btn-primary:hover {
+      background-color: var(--accent-hover);
+    }
+    .btn-secondary {
+      background-color: var(--bg-tertiary);
+      color: var(--text-primary);
+      border: 1px solid var(--border);
+    }
+    .btn-secondary:hover {
+      background-color: var(--bg-primary);
+    }
+
+    /* ================= 모달 ================= */
+    .modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.6);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+    .modal-content {
+      background-color: var(--bg-secondary);
+      padding: 2rem;
+      border-radius: 8px;
+      width: 500px;
+      max-width: 90%;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+    }
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+    }
+    .modal-header h3 {
+      color: var(--accent);
+    }
+    .modal-close {
+      background: none;
+      border: none;
+      color: var(--text-secondary);
+      font-size: 1.5rem;
+      cursor: pointer;
+    }
+    .modal-footer {
+      display: flex;
+      justify-content: flex-end;
+      gap: 1rem;
+      margin-top: 1.5rem;
+    }
+
+    /* ================= 스크롤바 ================= */
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: var(--bg-tertiary);
+    }
+    ::-webkit-scrollbar-thumb {
+      background: var(--bg-secondary);
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--border);
+    }
+
+    /* Material 아이콘 크기 조정 */
+    .material-icons {
+      font-size: 18px;
+      line-height: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* 툴팁 */
+    [title] {
+      position: relative;
+    }
+    [title]:hover::after {
+      content: attr(title);
+      position: absolute;
+      bottom: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      white-space: nowrap;
+      background-color: var(--bg-secondary);
+      color: var(--text-primary);
+      font-size: 0.75rem;
+      padding: 0.25rem 0.5rem;
+      border-radius: 4px;
+      z-index: 20;
+      margin-bottom: 0.25rem;
+    }
+  </style>
+</head>
+<body>
+  <!-- 헤더 -->
+  <header>
+    <div class="logo">수학 문제지 생성기</div>
+    <!-- 테마 드롭다운 -->
+    <div class="theme-dropdown">
+      <button class="dropdown-toggle">테마 선택</button>
+      <div class="dropdown-menu">
+        <div class="dropdown-item" data-theme="light">밝은 모드</div>
+        <div class="dropdown-item" data-theme="dark1">다크 모드 1</div>
+        <div class="dropdown-item" data-theme="dark2">다크 모드 2</div>
+      </div>
+    </div>
+  </header>
+
+  <!-- 왼쪽: 문제 추가 영역 -->
+  <div class="problem-sidebar">
+    <div class="problem-manager">
+      <div class="problem-input-section">
+        <h3>문제 추가</h3>
+        <div class="problem-form">
+          <input type="text" id="problem-text" placeholder="문제를 입력하세요" />
+          <button id="add-problem">
+            <i class="material-icons">add</i> 추가
+          </button>
+        </div>
+      </div>
+
+      <div class="problem-list">
+        <!-- 기본 샘플 문제들 -->
+        <div class="problem-item" draggable="true">
+          <div class="problem-text">다음 방정식을 풀어보세요: 2x + 5 = 15</div>
+          <div class="problem-info">
+            <span>난이도: 보통</span>
+            <span>배점: 10점</span>
+          </div>
+          <div class="problem-actions">
+            <button class="edit" title="편집">
+              <i class="material-icons">edit</i>
+            </button>
+            <button class="properties" title="속성">
+              <i class="material-icons">settings</i>
+            </button>
+            <button class="delete" title="삭제">
+              <i class="material-icons">delete</i>
+            </button>
+          </div>
+        </div>
+        <div class="problem-item" draggable="true">
+          <div class="problem-text">
+            삼각형의 넓이를 구하는 공식을 이용하여 밑변이 6cm, 높이가 8cm인 삼각형의 넓이를 구하세요.
+          </div>
+          <div class="problem-info">
+            <span>난이도: 쉬움</span>
+            <span>배점: 10점</span>
+          </div>
+          <div class="problem-actions">
+            <button class="edit" title="편집">
+              <i class="material-icons">edit</i>
+            </button>
+            <button class="properties" title="속성">
+              <i class="material-icons">settings</i>
+            </button>
+            <button class="delete" title="삭제">
+              <i class="material-icons">delete</i>
+            </button>
+          </div>
+        </div>
+        <div class="problem-item" draggable="true">
+          <div class="problem-text">다음 그래프의 기울기를 구하세요.</div>
+          <div class="problem-info">
+            <span>난이도: 어려움</span>
+            <span>배점: 15점</span>
+          </div>
+          <div class="problem-actions">
+            <button class="edit" title="편집">
+              <i class="material-icons">edit</i>
+            </button>
+            <button class="properties" title="속성">
+              <i class="material-icons">settings</i>
+            </button>
+            <button class="delete" title="삭제">
+              <i class="material-icons">delete</i>
+            </button>
+          </div>
+        </div>
+        <div class="problem-item" draggable="true">
+          <div class="problem-text">다항식 (x² + 3x + 2)를 인수분해 하세요.</div>
+          <div class="problem-info">
+            <span>난이도: 보통</span>
+            <span>배점: 10점</span>
+          </div>
+          <div class="problem-actions">
+            <button class="edit" title="편집">
+              <i class="material-icons">edit</i>
+            </button>
+            <button class="properties" title="속성">
+              <i class="material-icons">settings</i>
+            </button>
+            <button class="delete" title="삭제">
+              <i class="material-icons">delete</i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 중앙: 미리보기 -->
+  <div class="main-content">
+    <div class="preview-section">
+      <div class="preview-tabs">
+        <div class="preview-tab active" data-tab="problems">문제지</div>
+        <div class="preview-tab" data-tab="answers">정답지</div>
+      </div>
+
+      <div class="preview-content">
+        <div class="preview-container active" id="problems-preview">
+          <div class="a4-page">
+            <h2>수학 평가지</h2>
+            <div class="problem">
+              1. 다음 방정식을 풀어보세요: 2x + 5 = 15
+            </div>
+            <div class="problem">
+              2. 삼각형의 넓이를 구하는 공식을 이용하여 밑변이 6cm, 높이가 8cm인 삼각형의 넓이를 구하세요.
+            </div>
+            <div class="problem">
+              3. 다음 그래프의 기울기를 구하세요.
+            </div>
+            <div class="problem">
+              4. 다항식 (x² + 3x + 2)를 인수분해 하세요.
+            </div>
+            <div class="answer-sheet">
+              <div class="answer-item"><span>1.</span><div></div></div>
+              <div class="answer-item"><span>2.</span><div></div></div>
+              <div class="answer-item"><span>3.</span><div></div></div>
+              <div class="answer-item"><span>4.</span><div></div></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="preview-container" id="answers-preview">
+          <div class="a4-page">
+            <h2>수학 평가지 - 정답</h2>
+            <div class="problem">
+              1. 다음 방정식을 풀어보세요: 2x + 5 = 15<br />
+              <strong>정답: x = 5</strong>
+            </div>
+            <div class="problem">
+              2. 삼각형의 넓이를 구하는 공식을 이용하여 밑변이 6cm, 높이가 8cm인 삼각형의 넓이를 구하세요.
+              <br />
+              <strong>정답: 24cm²</strong>
+            </div>
+            <div class="problem">
+              3. 다음 그래프의 기울기를 구하세요.<br />
+              <strong>정답: 2</strong>
+            </div>
+            <div class="problem">
+              4. 다항식 (x² + 3x + 2)를 인수분해 하세요.<br />
+              <strong>정답: (x + 1)(x + 2)</strong>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="zoom-controls">
+        <button id="zoom-out" title="축소"><i class="material-icons">zoom_out</i></button>
+        <span id="zoom-level">100%</span>
+        <button id="zoom-in" title="확대"><i class="material-icons">zoom_in</i></button>
+      </div>
+
+      <div class="preview-toolbar">
+        <button id="prev-page" title="이전 페이지"><i class="material-icons">arrow_back</i></button>
+        <button id="next-page" title="다음 페이지"><i class="material-icons">arrow_forward</i></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 오른쪽: 설정 영역 -->
+  <div class="settings-sidebar">
+    <!-- 문제지 설정 -->
+    <div class="menu-section">
+      <h3>문제지 설정</h3>
+      <div class="content">
+        <div class="form-group">
+          <label for="worksheet-title">문제지 제목</label>
+          <input type="text" id="worksheet-title" placeholder="제목을 입력하세요" value="수학 평가지" />
+        </div>
+        <div class="form-group">
+          <label for="worksheet-subtitle">부제목</label>
+          <input type="text" id="worksheet-subtitle" placeholder="부제목을 입력하세요" />
+        </div>
+        <div class="form-group">
+          <label for="worksheet-date">날짜</label>
+          <input type="text" id="worksheet-date" placeholder="YYYY-MM-DD" />
+        </div>
+      </div>
+    </div>
+
+    <!-- 레이아웃 설정 -->
+    <div class="menu-section">
+      <h3>레이아웃 설정</h3>
+      <div class="content">
+        <div class="form-group">
+          <label for="font-size">글자 크기</label>
+          <input type="number" id="font-size" value="12" min="8" max="24" />
+        </div>
+        <div class="form-group">
+          <label for="line-spacing">줄 간격</label>
+          <input
+            type="number"
+            id="line-spacing"
+            value="1.5"
+            min="1"
+            max="3"
+            step="0.1"
+          />
+        </div>
+        <div class="form-group">
+          <label for="margin-top">상단 여백 (mm)</label>
+          <input type="number" id="margin-top" value="20" min="0" max="50" />
+        </div>
+        <div class="form-group">
+          <label for="margin-bottom">하단 여백 (mm)</label>
+          <input type="number" id="margin-bottom" value="20" min="0" max="50" />
+        </div>
+        <div class="form-group">
+          <label for="margin-left">좌측 여백 (mm)</label>
+          <input type="number" id="margin-left" value="20" min="0" max="50" />
+        </div>
+        <div class="form-group">
+          <label for="margin-right">우측 여백 (mm)</label>
+          <input type="number" id="margin-right" value="20" min="0" max="50" />
+        </div>
+        <div class="form-group">
+          <label for="text-color">글자 색상</label>
+          <input type="color" id="text-color" value="#000000" />
+        </div>
+      </div>
+    </div>
+
+    <!-- 출력 설정 -->
+    <div class="menu-section">
+      <h3>출력 설정</h3>
+      <div class="content">
+        <div class="form-group">
+          <div class="checkbox-container">
+            <input
+              type="checkbox"
+              id="include-answer-sheet"
+              checked
+            />
+            <label for="include-answer-sheet">답안지 포함하기</label>
+          </div>
+        </div>
+        <button class="btn btn-primary" id="download-worksheet">
+          문제지 PDF 다운로드
+        </button>
+        <button class="btn btn-primary" id="download-answers">
+          정답지 PDF 다운로드
+        </button>
+        <button class="btn btn-secondary" id="save-template">
+          템플릿 저장하기
+        </button>
+        <button class="btn btn-secondary" id="load-template">
+          템플릿 불러오기
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 문제 속성 모달 -->
+  <div class="modal" id="problem-properties-modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>문제 속성</h3>
+        <button class="modal-close">&times;</button>
+      </div>
+      <div class="form-group">
+        <label for="problem-difficulty">난이도</label>
+        <select id="problem-difficulty">
+          <option value="easy">쉬움</option>
+          <option value="medium" selected>보통</option>
+          <option value="hard">어려움</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="problem-type">문제 유형</label>
+        <select id="problem-type">
+          <option value="multiple_choice">객관식</option>
+          <option value="short_answer" selected>주관식</option>
+          <option value="true_false">참/거짓</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="problem-answer">정답</label>
+        <input
+          type="text"
+          id="problem-answer"
+          placeholder="정답을 입력하세요"
+        />
+      </div>
+      <div class="form-group">
+        <label for="problem-points">배점</label>
+        <input type="number" id="problem-points" value="10" min="1" max="100" />
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary modal-close">취소</button>
+        <button class="btn btn-primary" id="save-properties">저장</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      /* ========== 탭 전환 기능 ========== */
+      const tabs = document.querySelectorAll('.preview-tab');
+      tabs.forEach(tab => {
+        tab.addEventListener('click', function () {
+          const tabId = this.getAttribute('data-tab');
+          // 모든 탭 비활성화
+          document.querySelectorAll('.preview-tab').forEach(t => t.classList.remove('active'));
+          // 모든 콘텐츠 숨기기
+          document.querySelectorAll('.preview-container').forEach(c => c.classList.remove('active'));
+          // 클릭된 탭 활성화
+          this.classList.add('active');
+          document.getElementById(`${tabId}-preview`).classList.add('active');
+        });
+      });
+
+      /* ========== 모달 기능 ========== */
+      const modal = document.getElementById('problem-properties-modal');
+      const propertiesButtons = document.querySelectorAll('.properties');
+      const closeButtons = document.querySelectorAll('.modal-close');
+      propertiesButtons.forEach(button => {
+        button.addEventListener('click', function () {
+          alert('문제 속성 이벤트 발생');
+          modal.style.display = 'flex';
+        });
+      });
+      closeButtons.forEach(button => {
+        button.addEventListener('click', function () {
+          modal.style.display = 'none';
+        });
+      });
+      window.addEventListener('click', function (event) {
+        if (event.target === modal) {
+          modal.style.display = 'none';
+        }
+      });
+
+      /* ========== 줌 컨트롤 기능 ========== */
+      const zoomIn = document.getElementById('zoom-in');
+      const zoomOut = document.getElementById('zoom-out');
+      const zoomLevel = document.getElementById('zoom-level');
+      const pages = document.querySelectorAll('.a4-page');
+      let currentZoom = 100;
+
+      zoomIn.addEventListener('click', function () {
+        if (currentZoom < 200) {
+          currentZoom += 10;
+          updateZoom();
+        }
+      });
+      zoomOut.addEventListener('click', function () {
+        if (currentZoom > 50) {
+          currentZoom -= 10;
+          updateZoom();
+        }
+      });
+      function updateZoom() {
+        zoomLevel.textContent = `${currentZoom}%`;
+        pages.forEach(page => {
+          page.style.transform = `scale(${currentZoom / 100})`;
+        });
+      }
+
+      /* ========== 드래그 앤 드롭 기능 ========== */
+      const problemItems = document.querySelectorAll('.problem-item');
+      const problemList = document.querySelector('.problem-list');
+      let draggedItem = null;
+
+      problemItems.forEach(item => {
+        item.addEventListener('dragstart', function () {
+          draggedItem = this;
+          setTimeout(() => {
+            this.classList.add('dragging');
+          }, 0);
+        });
+        item.addEventListener('dragend', function () {
+          this.classList.remove('dragging');
+          draggedItem = null;
+        });
+      });
+
+      problemList.addEventListener('dragover', function (e) {
+        e.preventDefault();
+        const afterElement = getDragAfterElement(this, e.clientY);
+        const draggable = document.querySelector('.dragging');
+        if (afterElement == null) {
+          this.appendChild(draggable);
+        } else {
+          this.insertBefore(draggable, afterElement);
+        }
+      });
+      function getDragAfterElement(container, y) {
+        const draggableElements = [
+          ...container.querySelectorAll('.problem-item:not(.dragging)'),
+        ];
+        return draggableElements.reduce(
+          (closest, child) => {
+            const box = child.getBoundingClientRect();
+            const offset = y - box.top - box.height / 2;
+            if (offset < 0 && offset > closest.offset) {
+              return { offset: offset, element: child };
+            } else {
+              return closest;
+            }
+          },
+          { offset: Number.NEGATIVE_INFINITY }
+        ).element;
+      }
+
+      /* ========== 문제 추가 및 아이콘 이벤트 ========== */
+      const addProblemButton = document.getElementById('add-problem');
+      const problemTextInput = document.getElementById('problem-text');
+
+      addProblemButton.addEventListener('click', function () {
+        const problemText = problemTextInput.value.trim();
+        if (problemText) {
+          const newProblem = document.createElement('div');
+          newProblem.className = 'problem-item';
+          newProblem.draggable = true;
+          newProblem.innerHTML = `
+            <div class="problem-text">${problemText}</div>
+            <div class="problem-info">
+              <span>난이도: 보통</span>
+              <span>배점: 10점</span>
+            </div>
+            <div class="problem-actions">
+              <button class="edit" title="편집"><i class="material-icons">edit</i></button>
+              <button class="properties" title="속성"><i class="material-icons">settings</i></button>
+              <button class="delete" title="삭제"><i class="material-icons">delete</i></button>
+            </div>
+          `;
+          problemList.appendChild(newProblem);
+          updateProblems();
+          problemTextInput.value = '';
+          addProblemEvents(newProblem);
+        }
+      });
+
+      function addProblemEvents(problem) {
+        problem.addEventListener('dragstart', function () {
+          draggedItem = this;
+          setTimeout(() => {
+            this.classList.add('dragging');
+          }, 0);
+        });
+        problem.addEventListener('dragend', function () {
+          this.classList.remove('dragging');
+          draggedItem = null;
+        });
+
+        const deleteButton = problem.querySelector('.delete');
+        const editButton = problem.querySelector('.edit');
+        const propertiesButton = problem.querySelector('.properties');
+
+        deleteButton.addEventListener('click', function () {
+          alert('문제 삭제 이벤트 발생');
+          problem.remove();
+          updateProblems();
+        });
+        editButton.addEventListener('click', function () {
+          alert('문제 편집 이벤트 발생');
+          const text = problem.querySelector('.problem-text').textContent;
+          problemTextInput.value = text;
+          problem.remove();
+          updateProblems();
+        });
+        propertiesButton.addEventListener('click', function () {
+          alert('문제 속성 이벤트 발생');
+          modal.style.display = 'flex';
+        });
+      }
+      problemItems.forEach(addProblemEvents);
+
+      function updateProblems() {
+        const problems = document.querySelectorAll('.problem-item');
+        const problemsPreview = document.querySelector('#problems-preview .a4-page');
+        const answersPreview = document.querySelector('#answers-preview .a4-page');
+        const title = document.getElementById('worksheet-title').value;
+
+        // 제목 업데이트
+        problemsPreview.querySelector('h2').textContent = title;
+        answersPreview.querySelector('h2').textContent = title + ' - 정답';
+
+        let problemsHTML = '';
+        let answersHTML = '';
+        let answerSheetHTML = '';
+
+        problems.forEach((problem, index) => {
+          const problemText = problem.querySelector('.problem-text').textContent;
+          problemsHTML += `<div class="problem">${index + 1}. ${problemText}</div>`;
+          answersHTML += `<div class="problem">${index + 1}. ${problemText}<br>
+                            <strong>정답: ${problem.dataset.answer || '정답 미설정'}</strong>
+                          </div>`;
+          answerSheetHTML += `<div class="answer-item"><span>${index + 1}.</span><div></div></div>`;
+        });
+
+        problemsPreview.innerHTML = `
+          <h2>${title}</h2>
+          ${problemsHTML}
+          <div class="answer-sheet">
+            ${answerSheetHTML}
+          </div>
+        `;
+        answersPreview.innerHTML = `
+          <h2>${title} - 정답</h2>
+          ${answersHTML}
+        `;
+      }
+
+      document.getElementById('worksheet-title').addEventListener('input', updateProblems);
+      updateProblems();
+
+      /* ========== 설정 영역의 토글(아코디언) 기능 ========== */
+      const menuHeaders = document.querySelectorAll('.menu-section h3');
+      menuHeaders.forEach(header => {
+        header.addEventListener('click', function () {
+          const content = this.nextElementSibling;
+          if (content.style.display === 'none') {
+            content.style.display = 'block';
+          } else {
+            content.style.display = 'none';
+          }
+        });
+      });
+
+      /* ========== 테마 변경 기능 ========== */
+      const themes = {
+        light: {
+          "--bg-primary": "#ffffff",
+          "--bg-secondary": "#f0f0f0",
+          "--bg-tertiary": "#e0e0e0",
+          "--text-primary": "#000000",
+          "--text-secondary": "#555555",
+          "--accent": "#007bff",
+          "--accent-hover": "#0056b3",
+          "--danger": "#e74c3c",
+          "--success": "#2ecc71",
+          "--warning": "#f39c12",
+          "--border": "#cccccc"
+        },
+        dark1: {
+          "--bg-primary": "#1a1a1a",
+          "--bg-secondary": "#252525",
+          "--bg-tertiary": "#333333",
+          "--text-primary": "#e0e0e0",
+          "--text-secondary": "#b0b0b0",
+          "--accent": "#6d5acd",
+          "--accent-hover": "#8574e3",
+          "--danger": "#e74c3c",
+          "--success": "#2ecc71",
+          "--warning": "#f39c12",
+          "--border": "#444444"
+        },
+        dark2: {
+          "--bg-primary": "#121212",
+          "--bg-secondary": "#1e1e1e",
+          "--bg-tertiary": "#2a2a2a",
+          "--text-primary": "#f5f5f5",
+          "--text-secondary": "#aaaaaa",
+          "--accent": "#bb86fc",
+          "--accent-hover": "#9b59b6",
+          "--danger": "#cf6679",
+          "--success": "#03dac6",
+          "--warning": "#f39c12",
+          "--border": "#3c3c3c"
+        }
+      };
+
+      function changeTheme(themeName) {
+        const theme = themes[themeName];
+        for (let variable in theme) {
+          document.documentElement.style.setProperty(variable, theme[variable]);
+        }
+      }
+
+      const dropdownToggle = document.querySelector('.dropdown-toggle');
+      const dropdownMenu = document.querySelector('.dropdown-menu');
+      dropdownToggle.addEventListener('click', function () {
+        dropdownMenu.style.display = (dropdownMenu.style.display === 'block') ? 'none' : 'block';
+      });
+
+      document.querySelectorAll('.dropdown-item').forEach(item => {
+        item.addEventListener('click', function () {
+          const selectedTheme = this.getAttribute('data-theme');
+          changeTheme(selectedTheme);
+          dropdownMenu.style.display = 'none';
+        });
+      });
+
+      /* ========== PDF 다운로드 기능 ========== */
+      document.getElementById('download-worksheet').addEventListener('click', function () {
+        const element = document.querySelector('#problems-preview .a4-page');
+        const opt = {
+          margin: 0,
+          filename: 'worksheet.pdf',
+          image: { type: 'jpeg', quality: 1 },
+          html2canvas: { scale: 2 },
+          jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+        };
+        html2pdf().set(opt).from(element).save();
+      });
+      document.getElementById('download-answers').addEventListener('click', function () {
+        const element = document.querySelector('#answers-preview .a4-page');
+        const opt = {
+          margin: 0,
+          filename: 'answers.pdf',
+          image: { type: 'jpeg', quality: 1 },
+          html2canvas: { scale: 2 },
+          jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+        };
+        html2pdf().set(opt).from(element).save();
+      });
+    });
+  </script>
+</body>
+</html>
