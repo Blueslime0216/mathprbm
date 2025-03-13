@@ -13,7 +13,7 @@ function createModalContainer(): HTMLElement {
       bottom: '20px',
       zIndex: '10000',
       display: 'flex',
-      flexDirection: 'column', // 새 모달이 컨테이너 하단에 추가되어 아래에서 위로 등장
+      flexDirection: 'column',
       gap: '10px',
       alignItems: 'flex-start',
       pointerEvents: 'none'

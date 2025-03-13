@@ -99,16 +99,14 @@
 /* 진행바 컨테이너 */
 .modal-progress-container {
   width: 100%;
-  padding: 4px;
   background-color: var(--bg-tertiary);
-  border-bottom: 1px solid var(--border);
   box-sizing: border-box;
 }
 
 /* 진행바 */
 .modal-progress-bar {
   height: 4px;
-  background-color: var(--accent);
+  background-color: var(--border);
   width: 100%;
   transition: width 0.1s linear;
 }
