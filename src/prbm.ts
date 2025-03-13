@@ -1,3 +1,4 @@
+import { showModal } from "./modal";
 import { updateProblems } from "./page";
 
 /* ========== 드래그 앤 드롭 기능 ========== */
@@ -55,22 +56,52 @@ const problemTextInput = document.getElementById('problem-text') as HTMLInputEle
 
 addProblemButton.addEventListener('click', () => {
     const problemText = problemTextInput.value.trim();
-    if (problemText) {
-        const newProblem = document.createElement('div');
-        newProblem.className = 'problem-item';
-        newProblem.draggable = true;
-        newProblem.innerHTML = `
-            <div class="problem-textDiv">
-                <div class="problem-text">${problemText}</div>
-                <div class="problem-info">난이도: 보통 | 배점: 10점</div>
-            </div>
-            <button class="edit" title="편집"><i class="material-icons">edit</i></button>
-        `;
-        problemList.appendChild(newProblem);
-        updateProblems();
-        problemTextInput.value = '';
-        addProblemEvents(newProblem);
+    if (!problemText) {
+        // 기본 메시지 (info 타입)
+        // msg("안녕하세요! 이것은 정보 메시지입니다.");
+
+        // 성공 메시지
+        // msg("작업이 성공적으로 완료되었습니다!", "success");
+
+        // 경고 메시지
+        // msg("주의: 저장되지 않은 변경사항이 있습니다.", "warning");
+        showModal("주의: 저장되지 않은 변경사항이 있습니다.", "warning");
+
+        // // 오류 메시지
+        // msg("오류가 발생했습니다. 다시 시도해 주세요.", "error");
+        showModal("오류가 발생했습니다. 다시 시도해 주세요.", "error");
+
+        // // 별칭 함수를 사용한 방법
+        // msgInfo("정보 메시지입니다.");
+        // msgSuccess("성공 메시지입니다.");
+        // msgWarning("경고 메시지입니다.");
+        // msgError("오류 메시지입니다.");
+
+        // // 추가 옵션 사용
+        // msg("커스텀 제목과 콜백이 있는 메시지입니다.", "info", {
+        // title: "커스텀 제목",
+        // duration: 5000,  // 5초 후 자동으로 닫힘
+        //     callback: () => console.log("메시지가 닫혔습니다!")
+        // });
+
+        // // alert 대체
+        // customAlert("기존 alert 대신 사용하는 메시지입니다.");
+        return;
     }
+    const newProblem = document.createElement('div');
+    newProblem.className = 'problem-item';
+    newProblem.draggable = true;
+    newProblem.innerHTML = `
+        <div class="problem-textDiv">
+            <div class="problem-text">${problemText}</div>
+            <div class="problem-info">난이도: 보통 | 배점: 10점</div>
+        </div>
+        <button class="edit" title="편집"><i class="material-icons">edit</i></button>
+    `;
+    problemList.appendChild(newProblem);
+    updateProblems();
+    problemTextInput.value = '';
+    addProblemEvents(newProblem);
 });
 
 function addProblemEvents(problem: HTMLElement): void {

@@ -1,19 +1,6 @@
 /* ========== 테마 변경 기능 ========== */
 const themes: { [key: string]: { [key: string]: string } } = {
-    light: {
-      "--bg-primary": "#ffffff",
-      "--bg-secondary": "#f0f0f0",
-      "--bg-tertiary": "#e0e0e0",
-      "--text-primary": "#000000",
-      "--text-secondary": "#555555",
-      "--accent": "#007bff",
-      "--accent-hover": "#0056b3",
-      "--danger": "#e74c3c",
-      "--success": "#2ecc71",
-      "--warning": "#f39c12",
-      "--border": "#cccccc"
-    },
-    dark1: {
+    "dark": {
       "--bg-primary": "#1a1a1a",
       "--bg-secondary": "#252525",
       "--bg-tertiary": "#333333",
@@ -26,7 +13,7 @@ const themes: { [key: string]: { [key: string]: string } } = {
       "--warning": "#f39c12",
       "--border": "#444444"
     },
-    dark2: {
+    "dark-purple": {
       "--bg-primary": "#121212",
       "--bg-secondary": "#1e1e1e",
       "--bg-tertiary": "#2a2a2a",
@@ -39,7 +26,7 @@ const themes: { [key: string]: { [key: string]: string } } = {
       "--warning": "#f39c12",
       "--border": "#3c3c3c"
     },
-    blackwhite: {
+    "blackwhite": {
       "--bg-primary": "#000000",
       "--bg-secondary": "#000000",
       "--bg-tertiary": "#111111",
@@ -77,7 +64,46 @@ const themes: { [key: string]: { [key: string]: string } } = {
       "--success": "#2ecc71",
       "--warning": "#f39c12",
       "--border": "#444444"
-    }
+    },
+    "light-orange": {
+      "--bg-primary": "#ffffff",
+      "--bg-secondary": "#f0f0f0",
+      "--bg-tertiary": "#e0e0e0",
+      "--text-primary": "#000000",
+      "--text-secondary": "#555555",
+      "--accent": "#fd7e14",
+      "--accent-hover": "#d5600f",
+      "--danger": "#e74c3c",
+      "--success": "#2ecc71",
+      "--warning": "#f39c12",
+      "--border": "#cccccc"
+    },
+    "light-green": {
+      "--bg-primary": "#ffffff",
+      "--bg-secondary": "#f0f0f0",
+      "--bg-tertiary": "#e0e0e0",
+      "--text-primary": "#000000",
+      "--text-secondary": "#555555",
+      "--accent": "#28a745",
+      "--accent-hover": "#218838",
+      "--danger": "#e74c3c",
+      "--success": "#2ecc71",
+      "--warning": "#f39c12",
+      "--border": "#cccccc"
+    },
+    "light-blue": {
+      "--bg-primary": "#ffffff",
+      "--bg-secondary": "#f0f0f0",
+      "--bg-tertiary": "#e0e0e0",
+      "--text-primary": "#000000",
+      "--text-secondary": "#555555",
+      "--accent": "#007bff",
+      "--accent-hover": "#0056b3",
+      "--danger": "#e74c3c",
+      "--success": "#2ecc71",
+      "--warning": "#f39c12",
+      "--border": "#cccccc"
+    },
   };
 
   function changeTheme(themeName: string): void {

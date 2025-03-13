@@ -12,6 +12,7 @@
   />
   <!-- 외부 CSS 파일 -->
   <link rel="stylesheet" href="style/style.css">
+  <link rel="stylesheet" href="style/msgBox.css">
 </head>
 <body>
   <!-- 헤더 -->
@@ -21,12 +22,15 @@
     <div class="theme-dropdown">
       <button class="dropdown-toggle">테마 선택</button>
       <div class="dropdown-menu">
-        <div class="dropdown-item" data-theme="light">밝은 모드</div>
-        <div class="dropdown-item" data-theme="dark1">다크 모드 1</div>
-        <div class="dropdown-item" data-theme="dark2">다크 모드 2</div>
+        <div class="dropdown-item" data-theme="dark">다크 모드</div>
         <div class="dropdown-item" data-theme="blackwhite">완전 다크 모드</div>
+        <div class="dropdown-item" data-theme="dark-purple">다크 모드 (보라색)</div>
         <div class="dropdown-item" data-theme="dark-blue">다크 모드 (하늘색)</div>
         <div class="dropdown-item" data-theme="dark-pink">다크 모드 (핑크색)</div>
+
+        <div class="dropdown-item" data-theme="light-orange">밝은 모드 (주황색)</div>
+        <div class="dropdown-item" data-theme="light-green">밝은 모드 (초록색)</div>
+        <div class="dropdown-item" data-theme="light-blue">밝은 모드 (파란색)</div>
       </div>
     </div>
   </header>
@@ -204,5 +208,6 @@
   <script type="module" src="/src/page.ts"></script>
   <script type="module" src="/src/prbm.ts"></script>
   <script type="module" src="/src/theme.ts"></script>
+  <script type="module" src="/src/modal.ts"></script>
 </body>
 </html>
