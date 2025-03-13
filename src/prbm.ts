@@ -69,7 +69,7 @@ addProblemButton.addEventListener('click', () => {
 
         // // 오류 메시지
         // msg("오류가 발생했습니다. 다시 시도해 주세요.", "error");
-        showModal("오류가 발생했습니다. 다시 시도해 주세요.", "error");
+        // showModal("오류가 발생했습니다. 다시 시도해 주세요.", "error");
 
         // // 별칭 함수를 사용한 방법
         // msgInfo("정보 메시지입니다.");
