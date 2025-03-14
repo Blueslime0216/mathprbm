@@ -141,3 +141,21 @@
     padding: 0 0.5rem;
     font-size: 0.9rem;
 }
+
+/* ================= 스크롤바 ================= */
+.preview-content::-webkit-scrollbar {
+    width: 8px;
+}
+.preview-content::-webkit-scrollbar-track {
+    background: var(--bg-tertiary);
+}
+.preview-content::-webkit-scrollbar-thumb {
+    background: var(--bg-secondary);
+    border-radius: 4px;
+}
+.preview-content::-webkit-scrollbar-thumb:hover {
+    background: var(--border);
+}
+::-webkit-scrollbar-corner {
+    background: var(--bg-tertiary);
+}

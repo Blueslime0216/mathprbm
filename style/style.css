@@ -45,14 +45,17 @@ body {
     width: 8px;
 }
 ::-webkit-scrollbar-track {
-    background: var(--bg-tertiary);
+    background: var(--bg-secondary);
 }
 ::-webkit-scrollbar-thumb {
-    background: var(--bg-secondary);
+    background: var(--bg-tertiary);
     border-radius: 4px;
 }
 ::-webkit-scrollbar-thumb:hover {
     background: var(--border);
+}
+::-webkit-scrollbar-corner {
+    background: var(--bg-secondary);
 }
   
 /* Material 아이콘 크기 조정 */
