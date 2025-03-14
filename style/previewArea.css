@@ -1,0 +1,143 @@
+
+/* ================= 중앙: 미리보기 영역 ================= */
+.main-content {
+    grid-area: main;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+.preview-section {
+    position: relative;
+    flex: 1;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+.preview-tabs {
+    display: flex;
+    background-color: var(--bg-secondary);
+    border-bottom: 1px solid var(--border);
+}
+.preview-tab {
+    padding: 0.75rem 1.5rem;
+    cursor: pointer;
+    border-right: 1px solid var(--border);
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+}
+.preview-tab.active {
+    background-color: var(--bg-tertiary);
+    color: var(--text-primary);
+    font-weight: bold;
+}
+.preview-tab:hover:not(.active) {
+    background-color: var(--bg-primary);
+}
+.preview-content {
+    flex: 1;
+    overflow: auto;
+    padding: 1.5rem;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    background-color: var(--bg-tertiary);
+}
+.preview-container {
+    display: none;
+}
+.preview-container.active {
+    display: block;
+}
+.a4-page {
+    width: 210mm;
+    height: 297mm;
+    background-color: white;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    margin: 0 auto;
+    padding: 20mm;
+    color: #000;
+    position: relative;
+    overflow: hidden;
+    transform-origin: top center;
+}
+.a4-page h2 {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+.problem {
+    margin-bottom: 1.5rem;
+}
+.answer-sheet {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-top: 2rem;
+    border-top: 1px solid #ccc;
+    padding-top: 1rem;
+}
+.answer-item {
+    display: flex;
+    align-items: center;
+    width: 80px;
+}
+.answer-item span {
+    width: 20px;
+    text-align: right;
+    margin-right: 0.5rem;
+}
+.answer-item div {
+    width: 40px;
+    height: 30px;
+    border: 1px solid #000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.preview-toolbar {
+    position: absolute;
+    bottom: 1rem;
+    right: 1rem;
+    display: flex;
+    gap: 0.5rem;
+    z-index: 10;
+}
+.preview-toolbar button {
+    background-color: var(--bg-secondary);
+    color: var(--text-primary);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 0.5rem;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+.preview-toolbar button:hover {
+    background-color: var(--bg-primary);
+}
+/* 줌 컨트롤 */
+.zoom-controls {
+    position: absolute;
+    bottom: 1rem;
+    left: 1rem;
+    background-color: var(--bg-secondary);
+    border-radius: 4px;
+    display: flex;
+    overflow: hidden;
+    border: 1px solid var(--border);
+}
+.zoom-controls button {
+    background: none;
+    border: none;
+    padding: 0.5rem;
+    cursor: pointer;
+    color: var(--text-primary);
+    transition: background-color 0.2s;
+}
+.zoom-controls button:hover {
+    background-color: var(--bg-primary);
+}
+.zoom-controls span {
+    display: flex;
+    align-items: center;
+    padding: 0 0.5rem;
+    font-size: 0.9rem;
+}

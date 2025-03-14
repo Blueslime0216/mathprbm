@@ -20,4 +20,7 @@ export const cssList = [
     'msgBox',
     'pageTemplate',
     'header',
+    'problemPanel',
+    'previewArea',
+    'settingPanel',
 ];
