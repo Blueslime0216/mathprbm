@@ -1,0 +1,16 @@
+/* ================= 헤더 ================= */
+header {
+    grid-area: header;
+    background-color: var(--bg-secondary);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 1.5rem;
+    border-bottom: 1px solid var(--border);
+    height: 60px;
+}
+.logo {
+    color: var(--accent);
+    font-size: 1.5rem;
+    font-weight: bold;
+}

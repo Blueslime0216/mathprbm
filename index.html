@@ -6,14 +6,17 @@
   <title>수학 문제지 생성기</title>
   <!-- html2pdf 라이브러리 (PDF 다운로드용) -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.2/html2pdf.bundle.min.js"></script>
+  <!-- Material Icons -->
   <link
     href="https://cdnjs.cloudflare.com/ajax/libs/material-design-icons/3.0.1/iconfont/material-icons.min.css"
     rel="stylesheet"
   />
-  <!-- 외부 CSS 파일 -->
-  <link rel="stylesheet" href="./style/style.css">
+  <!-- CSS 파일 -->
+  <!-- <link rel="stylesheet" href="./style/style.css">
   <link rel="stylesheet" href="./style/msgBox.css">
-  <link rel="stylesheet" href="./src/pageTemplate.css">
+  <link rel="stylesheet" href="./style/pageTemplate.css"> -->
+  <!-- import.ts 스크립트 실행 -->
+  <script type="module" src="/src/init.ts"></script>
 </head>
 <body>
   <!-- 헤더 -->
@@ -134,7 +137,7 @@
   </div>
 
   <!-- 오른쪽: 설정 영역 -->
-  <div class="settings-sidebar">
+  <div class="setting-sidebar">
     <div class="menu-section">
       <h3>문제지 설정</h3>
       <div class="content">
@@ -204,12 +207,12 @@
     </div>
   </div>
 
-  <script type="module" src="/src/app.ts"></script>
+  <!-- <script type="module" src="/src/app.ts"></script>
   <script type="module" src="/src/downloader.ts"></script>
   <script type="module" src="/src/page.ts"></script>
   <script type="module" src="/src/prbm.ts"></script>
   <script type="module" src="/src/theme.ts"></script>
   <script type="module" src="/src/modal.ts"></script>
-  <script type="module" src="/src/pageTemplate.ts"></script>
+  <script type="module" src="/src/pageTemplate.ts"></script> -->
 </body>
 </html>
