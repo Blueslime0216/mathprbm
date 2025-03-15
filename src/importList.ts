@@ -12,6 +12,7 @@ export const jsList = [
     'pageTemplate',
     'prbm',
     'theme',
+    'menuMinimized',
 ];
 
 // CSS 파일 리스트
@@ -23,4 +24,10 @@ export const cssList = [
     'problemPanel',
     'previewArea',
     'settingPanel',
+];
+
+
+// prbm 파일 리스트
+export const prbmList = [
+    'add',
 ];

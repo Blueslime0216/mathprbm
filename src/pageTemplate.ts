@@ -68,8 +68,3 @@ export function createPageTemplate(params: {
     </div>
   `;
 }
-
-/* 
-   위 함수는 페이지에 템플릿을 동적으로 생성해서 반환합니다. 
-   이후 이 템플릿을 DOM에 추가하려면 innerHTML 또는 직접 요소 삽입을 사용할 수 있습니다.
-*/

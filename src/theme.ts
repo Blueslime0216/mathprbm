@@ -8,10 +8,11 @@ const themes: { [key: string]: { [key: string]: string } } = {
       "--text-secondary": "#b0b0b0",
       "--accent": "#6d5acd",
       "--accent-hover": "#8574e3",
-      "--danger": "#e74c3c",
+      "--info": "#3498db",
       "--success": "#2ecc71",
       "--warning": "#f39c12",
-      "--border": "#444444"
+      "--danger": "#e74c3c",
+      "--border": "#444444",
     },
     "dark-purple": {
       "--bg-primary": "#121212",
@@ -21,10 +22,11 @@ const themes: { [key: string]: { [key: string]: string } } = {
       "--text-secondary": "#aaaaaa",
       "--accent": "#bb86fc",
       "--accent-hover": "#9b59b6",
-      "--danger": "#cf6679",
+      "--info": "#3498db",
       "--success": "#03dac6",
       "--warning": "#f39c12",
-      "--border": "#3c3c3c"
+      "--danger": "#cf6679",
+      "--border": "#3c3c3c",
     },
     "blackwhite": {
       "--bg-primary": "#000000",
@@ -34,10 +36,11 @@ const themes: { [key: string]: { [key: string]: string } } = {
       "--text-secondary": "#cccccc",
       "--accent": "#ffffff",
       "--accent-hover": "#dddddd",
-      "--danger": "#ffffff",
+      "--info": "#3498db",
       "--success": "#ffffff",
       "--warning": "#ffffff",
-      "--border": "#444444"
+      "--danger": "#ffffff",
+      "--border": "#444444",
     },
     "dark-blue": {
       "--bg-primary": "#1a1a1a",
@@ -47,10 +50,11 @@ const themes: { [key: string]: { [key: string]: string } } = {
       "--text-secondary": "#b0b0b0",
       "--accent": "#87CEEB",
       "--accent-hover": "#6bb9f0",
-      "--danger": "#e74c3c",
+      "--info": "#3498db",
       "--success": "#2ecc71",
       "--warning": "#f39c12",
-      "--border": "#444444"
+      "--danger": "#e74c3c",
+      "--border": "#444444",
     },
     "dark-pink": {
       "--bg-primary": "#1a1a1a",
@@ -60,10 +64,11 @@ const themes: { [key: string]: { [key: string]: string } } = {
       "--text-secondary": "#b0b0b0",
       "--accent": "#ff69b4",
       "--accent-hover": "#ff85c0",
-      "--danger": "#e74c3c",
+      "--info": "#3498db",
       "--success": "#2ecc71",
       "--warning": "#f39c12",
-      "--border": "#444444"
+      "--danger": "#e74c3c",
+      "--border": "#444444",
     },
     "light-orange": {
       "--bg-primary": "#ffffff",
@@ -73,10 +78,11 @@ const themes: { [key: string]: { [key: string]: string } } = {
       "--text-secondary": "#555555",
       "--accent": "#fd7e14",
       "--accent-hover": "#d5600f",
-      "--danger": "#e74c3c",
+      "--info": "#3498db",
       "--success": "#2ecc71",
       "--warning": "#f39c12",
-      "--border": "#cccccc"
+      "--danger": "#e74c3c",
+      "--border": "#cccccc",
     },
     "light-green": {
       "--bg-primary": "#ffffff",
@@ -86,10 +92,11 @@ const themes: { [key: string]: { [key: string]: string } } = {
       "--text-secondary": "#555555",
       "--accent": "#28a745",
       "--accent-hover": "#218838",
-      "--danger": "#e74c3c",
+      "--info": "#3498db",
       "--success": "#2ecc71",
       "--warning": "#f39c12",
-      "--border": "#cccccc"
+      "--danger": "#e74c3c",
+      "--border": "#cccccc",
     },
     "light-blue": {
       "--bg-primary": "#ffffff",
@@ -99,10 +106,11 @@ const themes: { [key: string]: { [key: string]: string } } = {
       "--text-secondary": "#555555",
       "--accent": "#007bff",
       "--accent-hover": "#0056b3",
-      "--danger": "#e74c3c",
+      "--info": "#3498db",
       "--success": "#2ecc71",
       "--warning": "#f39c12",
-      "--border": "#cccccc"
+      "--danger": "#e74c3c",
+      "--border": "#cccccc",
     },
   };
 

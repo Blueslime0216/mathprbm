@@ -7,9 +7,10 @@
     --text-secondary: #b0b0b0;
     --accent: #6d5acd;
     --accent-hover: #8574e3;
-    --danger: #e74c3c;
+    --info: #3498db;
     --success: #2ecc71;
     --warning: #f39c12;
+    --danger: #e74c3c;
     --border: #444444;
 }
   

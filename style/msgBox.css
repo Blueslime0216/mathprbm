@@ -51,7 +51,7 @@
 
 /* 메시지 타입별 스타일 */
 .message-info {
-  border-left-color: var(--accent);
+  border-left-color: var(--info);
 }
 
 .message-success {

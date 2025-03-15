@@ -22,8 +22,15 @@
     cursor: pointer;
 }
 .menu-section .content {
-    padding: 1rem;
+    padding: 1rem 1rem 0 1rem;
     display: block;
+    overflow: hidden;
+    transition: padding 0.3s ease-in-out,
+                height 0.3s ease-in-out;
+}
+.menu-section .content.minimized {
+    padding: 0 1rem 0 1rem;
+    /* display: none; */
 }
 .form-group {
     margin-bottom: 1rem;
