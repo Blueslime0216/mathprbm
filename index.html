@@ -11,12 +11,20 @@
     href="https://cdnjs.cloudflare.com/ajax/libs/material-design-icons/3.0.1/iconfont/material-icons.min.css"
     rel="stylesheet"
   />
-  <!-- CSS 파일 -->
-  <!-- import.ts 스크립트 실행 -->
+  <!-- CSS 파일들 -->
+  <link rel="stylesheet" href="./style/style.css" />
+  <link rel="stylesheet" href="./style/settingPanel.css" />
+  <link rel="stylesheet" href="./style/previewArea.css" />
+  <link rel="stylesheet" href="./style/header.css" />
+  <link rel="stylesheet" href="./style/msgBox.css" />
+  <link rel="stylesheet" href="./style/pageTemplate.css" />
+  <link rel="stylesheet" href="./style/problemPanel.css" />
+  <link rel="stylesheet" href="./style/problemEditorModal.css" />
+  <!-- 초기화 스크립트 실행 -->
   <script type="module" src="/src/init.ts"></script>
 </head>
 <body>
-  <!-- 헤더 -->
+  <!-- 헤더 영역 -->
   <header>
     <div class="logo">수학 문제지 생성기</div>
     <!-- 테마 드롭다운 -->
@@ -28,7 +36,6 @@
         <div class="dropdown-item" data-theme="dark-purple">다크 모드 (보라색)</div>
         <div class="dropdown-item" data-theme="dark-blue">다크 모드 (하늘색)</div>
         <div class="dropdown-item" data-theme="dark-pink">다크 모드 (핑크색)</div>
-
         <div class="dropdown-item" data-theme="light-orange">밝은 모드 (주황색)</div>
         <div class="dropdown-item" data-theme="light-green">밝은 모드 (초록색)</div>
         <div class="dropdown-item" data-theme="light-blue">밝은 모드 (파란색)</div>
@@ -36,60 +43,48 @@
     </div>
   </header>
 
-  <!-- 왼쪽: 문제 추가 영역 -->
+  <!-- 왼쪽: 문제 추가 및 관리 영역 -->
   <div class="problem-sidebar">
     <div class="problem-manager">
       <div class="problem-input-section">
         <h3>문제 추가</h3>
+        <!-- 기존의 텍스트 입력을 제거하고 드롭다운 메뉴로 변경 -->
         <div class="problem-form">
-          <input type="text" id="problem-text" placeholder="문제를 입력하세요" />
+          <select id="problem-type-dropdown">
+            <!-- 옵션은 init.ts에서 동적으로 추가됩니다. -->
+          </select>
           <button id="add-problem">
             <i class="material-icons">add</i> 추가
           </button>
         </div>
       </div>
-
       <div class="problem-list">
-        <!-- 예시 문제 아이템 -->
-        <div class="problem-item" draggable="true">
-          <div class="problem-textDiv">
-            <div class="problem-text">다음 방정식을 풀어보세요: 2x + 5 = 15</div>
-            <div class="problem-info">난이도: 보통 | 배점: 10점</div>
-          </div>
-          <button class="edit" title="편집">
-            <i class="material-icons">edit</i>
-          </button>
-        </div>
+        <!-- 문제 아이템들이 동적으로 추가됩니다. -->
       </div>
     </div>
   </div>
 
-  <!-- 중앙: 미리보기 영역 -->
+  <!-- 중앙: 미리보기 영역 (문제지 / 정답지) -->
   <div class="main-content">
     <div class="preview-section">
       <div class="preview-tabs">
         <div class="preview-tab active" data-tab="problems">문제지</div>
         <div class="preview-tab" data-tab="answers">정답지</div>
       </div>
-
       <div class="preview-content">
         <div class="preview-container active" id="problems-preview">
-          <div class="a4-page">
-          </div>
+          <!-- A4 페이지가 동적으로 생성됩니다. -->
+          <div class="a4-page"></div>
         </div>
-
         <div class="preview-container" id="answers-preview">
-          <div class="a4-page">
-          </div>
+          <div class="a4-page"></div>
         </div>
       </div>
-
       <div class="zoom-controls">
         <button id="zoom-out" title="축소"><i class="material-icons">zoom_out</i></button>
         <span id="zoom-level">100%</span>
         <button id="zoom-in" title="확대"><i class="material-icons">zoom_in</i></button>
       </div>
-
       <div class="preview-toolbar">
         <button id="prev-page" title="이전 페이지"><i class="material-icons">arrow_back</i></button>
         <button id="next-page" title="다음 페이지"><i class="material-icons">arrow_forward</i></button>
@@ -99,6 +94,7 @@
 
   <!-- 오른쪽: 설정 영역 -->
   <div class="setting-sidebar">
+    <!-- 문제지 설정 영역 -->
     <div class="menu-section">
       <h3>문제지 설정</h3>
       <div class="content">
@@ -116,7 +112,7 @@
         </div>
       </div>
     </div>
-
+    <!-- 레이아웃 설정 영역 (글자 크기, 여백, 디버깅 모드 등) -->
     <div class="menu-section">
       <h3>레이아웃 설정</h3>
       <div class="content">
@@ -148,9 +144,16 @@
           <label for="text-color">글자 색상</label>
           <input type="color" id="text-color" value="#000000" />
         </div>
+        <!-- 디버깅 모드 체크박스: 미리보기 영역에 여백 오버레이 표시 -->
+        <div class="form-group">
+          <div class="checkbox-container">
+            <input type="checkbox" id="debug-mode" />
+            <label for="debug-mode">디버깅 모드</label>
+          </div>
+        </div>
       </div>
     </div>
-
+    <!-- 출력 설정 영역 -->
     <div class="menu-section">
       <h3>출력 설정</h3>
       <div class="content">
@@ -167,6 +170,5 @@
       </div>
     </div>
   </div>
-
 </body>
 </html>
